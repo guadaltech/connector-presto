@@ -1,0 +1,35 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# * gst_conformas_sale
+# 
+# Translators:
+# Carlos Miras <carlos.miras@guadaltech.es>, 2017
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 10.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-04-03 02:29+0000\n"
+"PO-Revision-Date: 2017-04-03 02:29+0000\n"
+"Last-Translator: Carlos Miras <carlos.miras@guadaltech.es>, 2017\n"
+"Language-Team: Spanish (https://www.transifex.com/oca/teams/23907/es/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Language: es\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#. module: gst_conformas_sale
+#: model:ir.model.fields,field_description:gst_conformas_sale.field_sale_presto_importer_file
+msgid "File"
+msgstr "Fichero"
+
+#. module: gst_conformas_sale
+#: model:ir.model.fields,field_description:gst_conformas_sale.field_sale_presto_importer_partner_id
+msgid "Partner"
+msgstr "Cliente"
+
+#. module: gst_conformas_sale
+#: model:ir.model.fields,field_description:gst_conformas_sale.field_sale_presto_importer_sale_id
+msgid "Sale order"
+msgstr "Presupuesto de venta"
+

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="sale_presto_importer_form_view" model="ir.ui.view">
+        <field name="name">sale.presto.importer.form</field>
+        <field name="model">sale.presto.importer</field>
+        <field name="arch" type="xml">
+            <form string="Importar presupuestos de PRESTO" create="0" edit="0" >
+                <sheet>
+                    <group>
+                        <field name="file" required="1"/>
+                        <field name="partner_id" required="1"/>
+                        <field name="sale_id"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="do" string="Importar" type="object" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_sale_presto_importer" model="ir.actions.act_window">
+        <field name="name">Importar PRESTO</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">sale.presto.importer</field>
+        <field name="view_type">form</field>
+        <field name="view_id" ref="sale_presto_importer_form_view"/>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_sale_presto_importer"
+            action="action_sale_presto_importer" parent="sales_team.menu_sales"
+            sequence="16"/>
+
+</odoo>
