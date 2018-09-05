@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 
+import itertools
+import base64
+
 from odoo import api, fields, models, _, exceptions
 from datetime import datetime, date, time, timedelta
-import itertools
-import datetime
 from odoo.tools import DEFAULT_SERVER_DATE_FORMAT, DEFAULT_SERVER_DATETIME_FORMAT
-
-import base64
 
 try:
     import xlrd
@@ -37,15 +36,22 @@ class SalePrestoImporter(models.TransientModel):
     _name = "sale.presto.importer"
     _description = "Importa presupuesto de venta de PRESTO"
 
-    file = fields.Binary('File', required=True, help="File to check and/or import, raw binary (not base64)")
-    partner_id = fields.Many2one('res.partner', string='Partner', required=True, domain=[('customer', '=', True)])
+    file = fields.Binary('File',
+                         required=True,
+                         help="File to check and/or import, "
+                              "raw binary (not base64)")
+    partner_id = fields.Many2one('res.partner',
+                                 string='Partner',
+                                 required=True,
+                                 domain=[('customer', '=', True)])
     sale_id = fields.Many2one('sale.order', string='Sale order')
 
     @api.multi
     def _read_xls(self, options):
         """ Read file content, using xlrd lib """
         for importer in self:
-            book = xlrd.open_workbook(file_contents=base64.decodestring(importer.file))
+            book = xlrd.open_workbook(
+                file_contents=base64.decodestring(importer.file))
             return importer._read_xls_book(book)
 
     def _read_xls_book(self, book):
@@ -64,8 +70,8 @@ class SalePrestoImporter(models.TransientModel):
                     )
                 elif cell.ctype is xlrd.XL_CELL_DATE:
                     is_datetime = cell.value % 1 != 0.0
-                    # emulate xldate_as_datetime for pre-0.9.3
-                    dt = datetime.datetime(*xlrd.xldate.xldate_as_tuple(cell.value, book.datemode))
+                    dt = datetime.datetime(*xlrd.xldate.xldate_as_tuple(
+                        cell.value, book.datemode))
                     values.append(
                         dt.strftime(DEFAULT_SERVER_DATETIME_FORMAT)
                         if is_datetime
@@ -128,25 +134,32 @@ class SalePrestoImporter(models.TransientModel):
                 'payment_mode_id': self.partner_id.customer_payment_mode_id.id,
             })
         for line_data in sale_line_list:
-            product_id = product_obj.search([('default_code', '=', line_data[0].strip())])
+            product_id = product_obj.search([
+                ('default_code', '=', line_data[0].strip())])
             if not product_id:
                 if not line_data[2]:
                     line_data[2] = 'ud'
                 if PARSE_UOM.get(line_data[2]):
-                    uom_id = uom_obj.search(['|', ('name', '=', PARSE_UOM.get(line_data[2])[0]),
-                                             ('name', '=', PARSE_UOM.get(line_data[2])[1])])
+                    uom_id = uom_obj.search([
+                        '|',
+                        ('name', '=', PARSE_UOM.get(line_data[2])[0]),
+                        ('name', '=', PARSE_UOM.get(line_data[2])[1])])
                     if not uom_id:
-                        uom_id = uom_obj.create({'name': PARSE_UOM.get(line_data[2])[1],
-                                                 'uom_type': 'reference',
-                                                 'category_id': self.env['product.uom.categ'].search([])[0].id,
-                                                 'rounding': 0.00100})
+                        uom_id = uom_obj.create({
+                            'name': PARSE_UOM.get(line_data[2])[1],
+                            'uom_type': 'reference',
+                            'category_id':
+                                self.env['product.uom.categ'].search([])[0].id,
+                            'rounding': 0.00100})
                 else:
                     uom_id = uom_obj.search([('name', '=', line_data[2])])
                 if not uom_id:
-                    uom_id = uom_obj.create({'name': line_data[2],
-                                             'uom_type': 'reference',
-                                             'category_id': self.env['product.uom.categ'].search([])[0].id,
-                                             'rounding': 0.00100})
+                    uom_id = uom_obj.create({
+                        'name': line_data[2],
+                        'uom_type': 'reference',
+                        'category_id':
+                            self.env['product.uom.categ'].search([])[0].id,
+                        'rounding': 0.00100})
                 product_data = {
                     'name': line_data[3],
                     'default_code': line_data[0].strip(),
@@ -157,10 +170,11 @@ class SalePrestoImporter(models.TransientModel):
                 product_id = product_obj.create(product_data)
 
             taxes_id = []
+
             for tax_id in product_id.taxes_id:
                 if tax_id.company_id == self.sale_id.company_id:
                     taxes_id.append(tax_id.id)
-            # taxes_id = product_id.taxes_id.mapped('id')
+
             sale_line_obj.create({
                 'order_id': self.sale_id.id,
                 'product_id': product_id.id,
