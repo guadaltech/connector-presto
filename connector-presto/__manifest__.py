@@ -27,7 +27,7 @@
     'category': 'Sale',
     'description': 'Módulo que extiende las funcionalidades de Odoo para Ventas',
     'author': 'Guadaltech',
-    'contributor': 'Francisco Javier Pérez Garrido, Carlos Miras del Rio'
+    'contributor': 'Francisco Javier Pérez Garrido, Carlos Miras del Rio',
     'website': 'http://www.guadaltech.es',
     'depends': ['sale'],
     'data': [
